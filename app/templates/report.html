@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="card">
+    <div class="report-header">
+      <div>
+        <h1>Report</h1>
+        <div class="muted">
+          Company: <strong>{{ company_name or "Unknown" }}</strong>
+          {% if ticker %} • Ticker: <strong>{{ ticker }}</strong>{% endif %}
+          • CIK: <strong>{{ cik }}</strong>
+        </div>
+        <div class="muted">
+          Filing date: <strong>{{ filing_date }}</strong>
+          • Accession: <strong>{{ accession_number }}</strong>
+        </div>
+      </div>
+      <div class="report-actions">
+        <a class="button button-secondary" href="{{ html_url }}" target="_blank" rel="noreferrer">Open filing (HTML)</a>
+        <a class="button button-secondary" href="/">New search</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. 60-Second Snapshot</h2>
+    <div class="grid">
+      <div class="kv">
+        <div class="k">Revenue trend (3 years)</div>
+        <div class="v">{{ report.sixty_second_snapshot.revenue_trend_3y or "—" }}</div>
+      </div>
+      <div class="kv">
+        <div class="k">Revenue values</div>
+        <div class="v">
+          {% if report.sixty_second_snapshot.revenue_values_3y %}
+            {{ report.sixty_second_snapshot.revenue_values_3y }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+      <div class="kv">
+        <div class="k">Net income (latest year)</div>
+        <div class="v">{{ report.sixty_second_snapshot.net_income_latest_year if report.sixty_second_snapshot.net_income_latest_year is not none else "—" }}</div>
+      </div>
+      <div class="kv">
+        <div class="k">Cash on hand</div>
+        <div class="v">{{ report.sixty_second_snapshot.cash_on_hand if report.sixty_second_snapshot.cash_on_hand is not none else "—" }}</div>
+      </div>
+      <div class="kv">
+        <div class="k">Total debt</div>
+        <div class="v">{{ report.sixty_second_snapshot.total_debt if report.sixty_second_snapshot.total_debt is not none else "—" }}</div>
+      </div>
+      <div class="kv">
+        <div class="k">Cash runway estimate (months)</div>
+        <div class="v">{{ report.sixty_second_snapshot.cash_runway_months if report.sixty_second_snapshot.cash_runway_months is not none else "—" }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. Plain-English Summary</h2>
+    <p class="prose">{{ report.plain_english_summary }}</p>
+  </section>
+
+  <section class="card">
+    <h2>3. Risk Stickers (max 5)</h2>
+    {% if report.risk_stickers and report.risk_stickers|length > 0 %}
+      <div class="stickers">
+        {% for r in report.risk_stickers %}
+          <div class="sticker">
+            <div class="sticker-type">{{ r.type }}</div>
+            <div class="sticker-desc">{{ r.description }}</div>
+            <div class="sticker-src">Source: {{ r.source_reference }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="muted">—</div>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h2>4. Narrative vs Numbers Check</h2>
+    <div class="kv">
+      <div class="k">Status</div>
+      <div class="v">
+        <span class="pill {% if report.narrative_vs_numbers_check.status == 'ALIGNED' %}pill-ok{% else %}pill-warn{% endif %}">
+          {{ report.narrative_vs_numbers_check.status }}
+        </span>
+      </div>
+    </div>
+    <p class="prose">{{ report.narrative_vs_numbers_check.explanation }}</p>
+  </section>
+
+  <section class="card">
+    <h2>5. Financial Table</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Revenue (3 years)</td>
+          <td>
+            {% if report.financial_table.revenue_3y %}
+              {{ report.financial_table.revenue_3y }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td>Net income (latest year)</td>
+          <td>{{ report.financial_table.net_income_latest_year if report.financial_table.net_income_latest_year is not none else "—" }}</td>
+        </tr>
+        <tr>
+          <td>Cash</td>
+          <td>{{ report.financial_table.cash if report.financial_table.cash is not none else "—" }}</td>
+        </tr>
+        <tr>
+          <td>Debt</td>
+          <td>{{ report.financial_table.debt if report.financial_table.debt is not none else "—" }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>6. Confidence Level</h2>
+    <div class="pill pill-strong">{{ report.confidence_level }}</div>
+    <div class="muted small">
+      AI never guesses numbers. If data is unclear, fields are null and confidence is MANUAL_REVIEW_REQUIRED.
+    </div>
+  </section>
+{% endblock %}

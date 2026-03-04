@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title or "Filing Translation Engine" }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="brand">
+          <a href="/" class="brand-link">Filing Translation Engine</a>
+          <div class="brand-sub">S-1 / S-1A → Structured report</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="muted">
+          MVP prototype • Local-first • Cache-enabled
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

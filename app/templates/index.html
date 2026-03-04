@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="card">
+    <h1>Find latest S-1 / S-1/A</h1>
+    <p class="muted">
+      Enter a ticker (e.g., <code>PLTR</code>) or a CIK (digits).
+      The app retrieves the most recent S-1 or S-1/A filing in HTML and generates a structured report.
+    </p>
+
+    <form class="search" action="/search" method="get">
+      <label for="q" class="label">Ticker or CIK</label>
+      <input id="q" name="q" type="text" placeholder="AAPL or 0000320193" required />
+      <button type="submit">Generate report</button>
+    </form>
+
+    {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Notes</h2>
+    <ul class="list">
+      <li>Respects SEC rate limits and sends a proper User-Agent header.</li>
+      <li>If a report already exists for the filing, it is returned instantly (no AI call).</li>
+      <li>If numbers are unclear, fields are <code>null</code> and confidence is <code>MANUAL_REVIEW_REQUIRED</code>.</li>
+    </ul>
+  </section>
+{% endblock %}
